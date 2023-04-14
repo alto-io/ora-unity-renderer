@@ -99,3 +99,4 @@ Assets/Resources/env*
 !/Assets/Plugins/Sirenix/Demos/*.unitypackage 
 
 Assets/ORARenderer/Extracted
+Assets/ORARenderer/Extracted.meta

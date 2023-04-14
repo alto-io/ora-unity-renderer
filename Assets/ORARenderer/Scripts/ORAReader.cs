@@ -1,13 +1,10 @@
 namespace ORARenderer
 {
-	using Newtonsoft.Json;
 	using System;
 	using System.Collections.Generic;
-	using System.ComponentModel;
 	using System.IO;
 	using System.IO.Compression;
 	using System.Linq;
-	using System.Xml;
 	using System.Xml.Linq;
 	using UnityEditor;
 	using UnityEngine;
@@ -50,7 +47,10 @@ namespace ORARenderer
 		{
 			string path = MAIN_DIRECTORY + OUTPUT_SUB_DIR;
 			if (!Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
 				return;
+			}
 
 			DirectoryInfo di = new DirectoryInfo(path);
 
