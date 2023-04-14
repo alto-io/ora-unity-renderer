@@ -31,6 +31,7 @@ namespace ORARenderer
 		private const string MAIN_DIRECTORY = "Assets/ORARenderer/";
 		private const string OUTPUT_SUB_DIR = "Extracted/";
 
+		[SerializeField] private Arcadian arcadian;
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
 		[SerializeField] private ArcadianParts arcadianParts = new ArcadianParts();
 
@@ -41,6 +42,7 @@ namespace ORARenderer
 			ClearOutputDirectory();
 			GetAllParts();
 			AssetDatabase.Refresh();
+			arcadian.ReplaceParts(arcadianParts);
 		}
 
 		private void ClearOutputDirectory()
@@ -61,7 +63,7 @@ namespace ORARenderer
 				dir.Delete(true);
 		}
 
-		public void GetAllParts()
+		private void GetAllParts()
 		{
 			string xmlPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + "/" + "stack.xml";
 			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
@@ -78,7 +80,7 @@ namespace ORARenderer
 			}
 		}
 
-		public PartData GetPartData(string partName, string partLocation)
+		private PartData GetPartData(string partName, string partLocation)
 		{
 			PartData newPart = new PartData();
 
