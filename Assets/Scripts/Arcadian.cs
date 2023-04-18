@@ -45,51 +45,39 @@ public class Arcadian : MonoBehaviour
 	private Texture2D ResizePart(Texture2D source, ORARenderer.PartData partData, int targetWidth, int targetHeight)
 	{
 		Texture2D result = new Texture2D(targetWidth, targetHeight, source.format, true);
-		UnityEngine.Color[] rpixels = result.GetPixels(0);
 
-		float targetX = partData.Position.x;
-		float targetY = partData.Position.y;
+		UnityEngine.Color[] rPixels = result.GetPixels(0);
+		UnityEngine.Color[] sPixels = source.GetPixels(0);
 
-		int columnCounter = 0;
-		int rowCounter = 0;
-		int imgXCounter = 0;
-		int imgYCounter = 0;
+		Rect dstRect = new Rect(
+			partData.Position.x,
+			partData.Position.y,
+			source.width,
+			source.height
+		);
 
+		Debug.Log($"{partData.Name} + rect = {dstRect.x}, {dstRect.y}, {dstRect.xMax}, {dstRect.yMax}");
+		Debug.Log($"{source.width} x {source.height}");
 
-		for (int px = 0; px < rpixels.Length; px++)
+		int sPx = 0;
+
+		for (int px = 0; px < rPixels.Length; px++)
 		{
-			if (columnCounter >= targetWidth)
-			{
-				columnCounter = 0;
-				rowCounter++;
-			}
+			int x = px % targetWidth;
+			int y = px / targetHeight;
 
-			if (imgXCounter >= source.width)
+			if (dstRect.Contains(new Vector2(x, y)))
 			{
-				imgXCounter = 0;
-				imgYCounter++;
-			}
-
-			bool isXBlank = columnCounter < targetX || columnCounter >= targetX + source.width;
-			bool isYBlank = rowCounter < targetY || rowCounter >= targetY + source.height;
-
-			if (isXBlank || isYBlank)
-			{
-				rpixels[px] = UnityEngine.Color.clear;
+				rPixels[px] = sPixels[sPx];
+				sPx++;
 			}
 			else
 			{
-				rpixels[px] = source.GetPixel(imgXCounter, imgYCounter);
-				imgXCounter++;
+				rPixels[px] = UnityEngine.Color.clear;
 			}
-
-			columnCounter++;
 		}
 
-		Debug.Log(partData.Name);
-		Debug.Log($"sourceDimensions = {source.width}x{source.height} | targetLocation = {targetX},{targetY}");
-
-		result.SetPixels(rpixels, 0);
+		result.SetPixels(rPixels, 0);
 		result.Apply();
 		return result;
 	}
