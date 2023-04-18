@@ -70,8 +70,8 @@ public class Arcadian : MonoBehaviour
 				imgYCounter++;
 			}
 
-			bool isXBlank = columnCounter < targetX - (source.width / 2) || columnCounter >= targetX + (source.width / 2);
-			bool isYBlank = rowCounter < targetY - (source.height / 2) || rowCounter >= targetY + (source.height / 2);
+			bool isXBlank = columnCounter < targetX || columnCounter >= targetX + source.width;
+			bool isYBlank = rowCounter < targetY || rowCounter >= targetY + source.height;
 
 			if (isXBlank || isYBlank)
 			{
@@ -79,7 +79,7 @@ public class Arcadian : MonoBehaviour
 			}
 			else
 			{
-				rpixels[px] = source.GetPixel(columnCounter + 1, rowCounter + 1);
+				rpixels[px] = source.GetPixel(imgXCounter, imgYCounter);
 				imgXCounter++;
 			}
 
