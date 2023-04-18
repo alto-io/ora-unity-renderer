@@ -111,8 +111,6 @@ namespace ORARenderer
 				);
 
 				string pngPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + pngFileName;
-				Debug.Log((string)partElement.Attribute("src"));
-				Debug.Log(pngPath + "\n" + pngFileName);
 
 				using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
 					foreach (ZipArchiveEntry entry in zip.Entries)

@@ -1,37 +1,96 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public class Arcadian : MonoBehaviour
 {
-	[SerializeField] SkinnedMeshRenderer renderer;
+	[SerializeField] SkinnedMeshRenderer arcadianRenderer;
 
 	public void ReplaceParts(ORARenderer.ArcadianParts parts)
 	{
-		ReplacePart(renderer.materials[0], parts.Parts.Find(x => x.Location == "Skin"));
-		ReplacePart(renderer.materials[1], parts.Parts.Find(x => x.Location == "Eyes"));
-		ReplacePart(renderer.materials[2], parts.Parts.Find(x => x.Location == "Mouth"));
-		ReplacePart(renderer.materials[3], parts.Parts.Find(x => x.Location == "Top"));
-		ReplacePart(renderer.materials[4], parts.Parts.Find(x => x.Location == "Bottom"));
-		ReplacePart(renderer.materials[5], parts.Parts.Find(x => x.Location == "Right Hand"));
-		ReplacePart(renderer.materials[6], parts.Parts.Find(x => x.Location == "Left Hand"));
-		ReplacePart(renderer.materials[7], parts.Parts.Find(x => x.Location == "Head"));
+		ReplacePart(arcadianRenderer.materials[0], parts.Parts.Find(x => x.Location == "Skin"));
+		ReplacePart(arcadianRenderer.materials[1], parts.Parts.Find(x => x.Location == "Eyes"));
+		ReplacePart(arcadianRenderer.materials[2], parts.Parts.Find(x => x.Location == "Mouth"));
+		ReplacePart(arcadianRenderer.materials[3], parts.Parts.Find(x => x.Location == "Top"));
+		ReplacePart(arcadianRenderer.materials[4], parts.Parts.Find(x => x.Location == "Bottom"));
+		ReplacePart(arcadianRenderer.materials[5], parts.Parts.Find(x => x.Location == "Right Hand"));
+		ReplacePart(arcadianRenderer.materials[6], parts.Parts.Find(x => x.Location == "Left Hand"));
+		ReplacePart(arcadianRenderer.materials[7], parts.Parts.Find(x => x.Location == "Head"));
+
+		AssetDatabase.Refresh();
 	}
 
 	private void ReplacePart(Material material, ORARenderer.PartData partData)
 	{
-		byte[] imageByteArray = null;
-		FileStream fileStream = new FileStream(partData.Src, FileMode.Open, FileAccess.Read);
-		using (BinaryReader reader = new BinaryReader(fileStream))
+		Texture2D ogTex = null;
+		byte[] fileData;
+		if (File.Exists(partData.Src))
 		{
-			imageByteArray = new byte[reader.BaseStream.Length];
-			for (int i = 0; i < reader.BaseStream.Length; i++)
-                    imageByteArray[i] = reader.ReadByte();
-		};
+			fileData = File.ReadAllBytes(partData.Src);
+			ogTex = new Texture2D(2, 2);
+			ogTex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+		}
 
-		Texture2D newTex = new Texture2D(1,1);
-		newTex.LoadImage(imageByteArray);
-		material.SetTexture(partData.Name, newTex);
+		Texture2D newTex = ResizePart(ogTex, partData, 399, 399);
+
+		byte[] testByte = newTex.EncodeToPNG();
+		File.WriteAllBytes($"Assets/ORARenderer/{partData.Name}Test.png", testByte);
+
+		material.mainTexture = newTex;
+	}
+
+	private Texture2D ResizePart(Texture2D source, ORARenderer.PartData partData, int targetWidth, int targetHeight)
+	{
+		Texture2D result = new Texture2D(targetWidth, targetHeight, source.format, true);
+		UnityEngine.Color[] rpixels = result.GetPixels(0);
+
+		float targetX = partData.Position.x;
+		float targetY = partData.Position.y;
+
+		int columnCounter = 0;
+		int rowCounter = 0;
+		int imgXCounter = 0;
+		int imgYCounter = 0;
+
+
+		for (int px = 0; px < rpixels.Length; px++)
+		{
+			if (columnCounter >= targetWidth)
+			{
+				columnCounter = 0;
+				rowCounter++;
+			}
+
+			if (imgXCounter >= source.width)
+			{
+				imgXCounter = 0;
+				imgYCounter++;
+			}
+
+			bool isXBlank = columnCounter < targetX - (source.width / 2) || columnCounter >= targetX + (source.width / 2);
+			bool isYBlank = rowCounter < targetY - (source.height / 2) || rowCounter >= targetY + (source.height / 2);
+
+			if (isXBlank || isYBlank)
+			{
+				rpixels[px] = UnityEngine.Color.clear;
+			}
+			else
+			{
+				rpixels[px] = source.GetPixel(columnCounter + 1, rowCounter + 1);
+				imgXCounter++;
+			}
+
+			columnCounter++;
+		}
+
+		Debug.Log(partData.Name);
+		Debug.Log($"sourceDimensions = {source.width}x{source.height} | targetLocation = {targetX},{targetY}");
+
+		result.SetPixels(rpixels, 0);
+		result.Apply();
+		return result;
 	}
 }
