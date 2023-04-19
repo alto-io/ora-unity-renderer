@@ -24,16 +24,11 @@ namespace ORARenderer
 
 		private void ReplacePart(Material material, PartData partData)
 		{
-			Texture2D ogTex = null;
-			byte[] fileData;
-			if (File.Exists(partData.Src))
-			{
-				fileData = File.ReadAllBytes(partData.Src);
-				ogTex = new Texture2D(2, 2);
-				ogTex.LoadImage(fileData);
-			}
+			Texture2D sourceTex = null;
+			sourceTex = new Texture2D(2, 2);
+			sourceTex.LoadImage(partData.Src);
 
-			Texture2D newTex = ResizePart(ogTex, partData, 399, 399);
+			Texture2D newTex = ResizePart(sourceTex, partData, 399, 399);
 
 			material.mainTexture = newTex;
 		}

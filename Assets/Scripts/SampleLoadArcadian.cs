@@ -16,7 +16,6 @@ public class SampleLoadArcadian : MonoBehaviour
 	public void Start()
 	{
 		var oraReader = ORARenderer.ORAReader.GetInstance();
-		oraReader.Init();
 
 		var loadRequest = new ORARenderer.ArcadianPartLoadRequest
 		{

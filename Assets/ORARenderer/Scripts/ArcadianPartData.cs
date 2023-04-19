@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 namespace ORARenderer
@@ -36,7 +37,7 @@ namespace ORARenderer
 		public PartLocation Location;
 		public string Name;
 
-		public string Src;
+		public byte[] Src;
 		public float Opacity;
 		public int PosX;
 		public int PosY;

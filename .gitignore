@@ -97,6 +97,3 @@ Assets/Resources/env*
 
 # But keep the demo packages themselves.
 !/Assets/Plugins/Sirenix/Demos/*.unitypackage 
-
-Assets/ORARenderer/Extracted
-Assets/ORARenderer/Extracted.meta

@@ -1,13 +1,14 @@
 namespace ORARenderer
 {
+	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.IO.Compression;
 	using System.Linq;
 	using System.Xml.Linq;
-	using Unity.VisualScripting;
 	using UnityEditor;
 	using UnityEngine;
+	using UnityEngine.Windows;
 
 	public class ORAReader : Singleton<ORAReader>
 	{
@@ -20,23 +21,27 @@ namespace ORARenderer
 
 		private XDocument xmlStack;
 
-		public void Init()
-		{
-			ClearOutputDirectory();
-			AssetDatabase.Refresh();
-		}
-
 		public ArcadianParts GetPartData(ArcadianPartLoadRequest request)
 		{
 			ArcadianParts newParts = ConvertLoadRequest(request);
 
-			string xmlPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + "/" + "stack.xml";
 			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
+			{
 				foreach (ZipArchiveEntry entry in zip.Entries)
+				{
 					if (entry.Name == "stack.xml")
-						entry.ExtractToFile(xmlPath);
+					{
+						xmlStack = XDocument.Load(entry.Open());
+						break;
+					}
+				}
+			}
 
-			xmlStack = XDocument.Load(xmlPath);
+			if (xmlStack == null)
+			{
+				Debug.LogError("Invalid ORA file! Does not contain stack.xml");
+				return null;
+			}
 
 			for (int i = 0; i < newParts.Parts.Count; i++)
 			{
@@ -45,24 +50,6 @@ namespace ORARenderer
 			}
 
 			return newParts;
-		}
-
-		private void ClearOutputDirectory()
-		{
-			string path = MAIN_DIRECTORY + OUTPUT_SUB_DIR;
-			if (!Directory.Exists(path))
-			{
-				Directory.CreateDirectory(path);
-				return;
-			}
-
-			DirectoryInfo di = new DirectoryInfo(path);
-
-			foreach (FileInfo file in di.EnumerateFiles())
-				file.Delete();
-
-			foreach (DirectoryInfo dir in di.EnumerateDirectories())
-				dir.Delete(true);
 		}
 
 		private ArcadianParts ConvertLoadRequest(ArcadianPartLoadRequest request)
@@ -104,27 +91,43 @@ namespace ORARenderer
 			newPart.Location = partLocation;
 			newPart.Name = partName;
 
-			if (partElement != null)
+			if (partElement == null)
+				return newPart;
+
+			string pngFileName = (
+				(string)partElement.Attribute("src")).Substring(
+				((string)partElement.Attribute("src")).LastIndexOf('/') + 1
+			);
+
+			string pngPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + pngFileName;
+
+			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
 			{
-				string pngFileName = (
-					(string)partElement.Attribute("src")).Substring(
-					((string)partElement.Attribute("src")).LastIndexOf('/') + 1
-				);
-
-				string pngPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + pngFileName;
-
-				using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
-					foreach (ZipArchiveEntry entry in zip.Entries)
-						if (entry.Name == pngFileName)
-							entry.ExtractToFile(pngPath);
-
-				newPart.Src = pngPath;
-				newPart.Opacity = (float)partElement.Attribute("opacity");
-				newPart.PosX = (int)partElement.Attribute("x");
-				newPart.PosY = (int)partElement.Attribute("y");
+				foreach (ZipArchiveEntry entry in zip.Entries)
+				{
+					if (entry.Name == pngFileName)
+					{
+						newPart.Src = ConvertStreamToByteArray(entry.Open());
+						break;
+					}
+				}
 			}
 
+			//newPart.Src = pngPath;
+			newPart.Opacity = (float)partElement.Attribute("opacity");
+			newPart.PosX = (int)partElement.Attribute("x");
+			newPart.PosY = (int)partElement.Attribute("y");
+
 			return newPart;
+		}
+
+		private byte[] ConvertStreamToByteArray(Stream stream)
+		{
+			using (MemoryStream ms = new MemoryStream())
+			{
+				stream.CopyTo(ms);
+				return ms.ToArray();
+			}
 		}
 	}
 }
