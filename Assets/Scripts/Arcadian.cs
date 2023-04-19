@@ -48,18 +48,22 @@ public class Arcadian : MonoBehaviour
 
 		UnityEngine.Color[] rPixels = result.GetPixels(0);
 		UnityEngine.Color[] sPixels = source.GetPixels(0);
+		int sPx = 0;
+
+		int xMin = int.MaxValue;
+		int yMin = int.MaxValue;
+		int xMax = -1;
+		int yMax = -1;
 
 		Rect dstRect = new Rect(
 			partData.Position.x,
-			partData.Position.y,
+			(result.height - partData.Position.y) - source.height,
 			source.width,
 			source.height
 		);
 
 		Debug.Log($"{partData.Name} + rect = {dstRect.x}, {dstRect.y}, {dstRect.xMax}, {dstRect.yMax}");
 		Debug.Log($"{source.width} x {source.height}");
-
-		int sPx = 0;
 
 		for (int px = 0; px < rPixels.Length; px++)
 		{
@@ -70,12 +74,19 @@ public class Arcadian : MonoBehaviour
 			{
 				rPixels[px] = sPixels[sPx];
 				sPx++;
+
+				if (x < xMin) xMin = x;
+				else if (x > xMax) xMax = x;
+				if (y < yMin) yMin = y;
+				else if (y > yMax) yMax = y;
 			}
 			else
 			{
 				rPixels[px] = UnityEngine.Color.clear;
 			}
 		}
+
+		Debug.Log($"{partData.Name} min = {xMin},{yMin} | maX = {xMax},{yMax}");
 
 		result.SetPixels(rPixels, 0);
 		result.Apply();
