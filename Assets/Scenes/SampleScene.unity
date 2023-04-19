@@ -310,7 +310,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1300088251262857424, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
       propertyPath: m_Name
-      value: ORA Renderer
+      value: ORA Manager
       objectReference: {fileID: 0}
     - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
       propertyPath: m_RootOrder
@@ -367,7 +367,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5176784659355871851, guid: eec0111e9e862f74fa542479a3e88640, type: 3}
       propertyPath: m_Name
-      value: Arcadian Renderer
+      value: Arcadian
       objectReference: {fileID: 0}
     - target: {fileID: 5520413226739265745, guid: eec0111e9e862f74fa542479a3e88640, type: 3}
       propertyPath: m_RootOrder

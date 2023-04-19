@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1300088251262857426}
   - component: {fileID: 1300088251262857425}
   m_Layer: 0
-  m_Name: ORA Renderer
+  m_Name: ORA Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

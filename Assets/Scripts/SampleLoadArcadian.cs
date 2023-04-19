@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SampleLoadArcadian : MonoBehaviour
 {
-	[SerializeField] private ORARenderer.ArcadianLoader arcadianLoader;
+	[SerializeField] private ORARenderer.ArcadianRenderer arcadianLoader;
 
 	[SerializeField] private string skin = "Orc";
 	[SerializeField] private string eyes = "Eyepatch";

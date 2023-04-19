@@ -2,7 +2,7 @@ namespace ORARenderer
 {
 	using UnityEngine;
 
-	public class ArcadianLoader : MonoBehaviour
+	public class ArcadianRenderer : MonoBehaviour
 	{
 		[SerializeField] private SkinnedMeshRenderer arcadianRenderer;
 

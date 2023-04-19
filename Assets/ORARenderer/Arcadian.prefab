@@ -395,7 +395,7 @@ GameObject:
   - component: {fileID: 5520413226739265745}
   - component: {fileID: 5410736206865766206}
   m_Layer: 0
-  m_Name: Arcadian Renderer
+  m_Name: Arcadian
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
