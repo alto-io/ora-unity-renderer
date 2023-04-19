@@ -1,6 +1,5 @@
 namespace ORARenderer
 {
-	using System.IO;
 	using UnityEditor;
 	using UnityEngine;
 
@@ -22,10 +21,11 @@ namespace ORARenderer
 			AssetDatabase.Refresh();
 		}
 
+		#region Private
+
 		private void ReplacePart(Material material, PartData partData)
 		{
-			Texture2D sourceTex = null;
-			sourceTex = new Texture2D(2, 2);
+			Texture2D sourceTex = new Texture2D(2, 2);
 			sourceTex.LoadImage(partData.Src);
 
 			Texture2D newTex = ResizePart(sourceTex, partData, 399, 399);
@@ -37,8 +37,8 @@ namespace ORARenderer
 		{
 			Texture2D result = new Texture2D(targetWidth, targetHeight, source.format, true);
 
-			UnityEngine.Color[] rPixels = result.GetPixels(0);
-			UnityEngine.Color[] sPixels = source.GetPixels(0);
+			Color[] rPixels = result.GetPixels(0);
+			Color[] sPixels = source.GetPixels(0);
 			int sPx = 0;
 
 			Rect dstRect = new Rect(
@@ -47,11 +47,6 @@ namespace ORARenderer
 				source.width,
 				source.height
 			);
-
-			//int debugXMin = int.MaxValue;
-			//int debugYMin = int.MaxValue;
-			//int debugXMax = -1;
-			//int debugYMax = -1;
 
 			for (int px = 0; px < rPixels.Length; px++)
 			{
@@ -62,11 +57,6 @@ namespace ORARenderer
 				{
 					rPixels[px] = sPixels[sPx];
 					sPx++;
-
-					//if (x < debugXMin) debugXMin = x;
-					//else if (x > debugXMax) debugXMax = x;
-					//if (y < debugYMin) debugYMin = y;
-					//else if (y > debugYMax) debugYMax = y;
 				}
 				else
 				{
@@ -74,14 +64,12 @@ namespace ORARenderer
 				}
 			}
 
-			//Debug.Log($"{partData.Name} + rect = {dstRect.x}, {dstRect.y}, {dstRect.xMax}, {dstRect.yMax}");
-			//Debug.Log($"{source.width} x {source.height}");
-			//Debug.Log($"{partData.Name} min = {debugXMin},{debugYMin} | maX = {debugXMax},{debugYMax}");
-
 			result.SetPixels(rPixels, 0);
 			result.Apply();
 			return result;
 		}
+
+		#endregion
 	}
 
 }

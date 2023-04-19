@@ -1,6 +1,5 @@
 namespace ORARenderer
 {
-	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.IO.Compression;
@@ -8,18 +7,14 @@ namespace ORARenderer
 	using System.Xml.Linq;
 	using UnityEditor;
 	using UnityEngine;
-	using UnityEngine.Windows;
 
 	public class ORAReader : Singleton<ORAReader>
 	{
-		private const string MAIN_DIRECTORY = "Assets/ORARenderer/";
-		private const string OUTPUT_SUB_DIR = "Extracted/";
+		#region Public
 
 		public static ORAReader Instance { get; private set; } = null;
 
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
-
-		private XDocument xmlStack;
 
 		public ArcadianParts GetPartData(ArcadianPartLoadRequest request)
 		{
@@ -51,6 +46,14 @@ namespace ORARenderer
 
 			return newParts;
 		}
+
+		#endregion
+
+		#region Private
+
+		private const string MAIN_DIRECTORY = "Assets/ORARenderer/";
+		private const string OUTPUT_SUB_DIR = "Extracted/";
+		private XDocument xmlStack;
 
 		private ArcadianParts ConvertLoadRequest(ArcadianPartLoadRequest request)
 		{
@@ -113,7 +116,6 @@ namespace ORARenderer
 				}
 			}
 
-			//newPart.Src = pngPath;
 			newPart.Opacity = (float)partElement.Attribute("opacity");
 			newPart.PosX = (int)partElement.Attribute("x");
 			newPart.PosY = (int)partElement.Attribute("y");
@@ -129,5 +131,7 @@ namespace ORARenderer
 				return ms.ToArray();
 			}
 		}
+
+		#endregion
 	}
 }
