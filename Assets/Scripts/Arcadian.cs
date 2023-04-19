@@ -31,13 +31,10 @@ public class Arcadian : MonoBehaviour
 		{
 			fileData = File.ReadAllBytes(partData.Src);
 			ogTex = new Texture2D(2, 2);
-			ogTex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+			ogTex.LoadImage(fileData);
 		}
 
 		Texture2D newTex = ResizePart(ogTex, partData, 399, 399);
-
-		byte[] testByte = newTex.EncodeToPNG();
-		File.WriteAllBytes($"Assets/ORARenderer/{partData.Name}Test.png", testByte);
 
 		material.mainTexture = newTex;
 	}
@@ -50,11 +47,6 @@ public class Arcadian : MonoBehaviour
 		UnityEngine.Color[] sPixels = source.GetPixels(0);
 		int sPx = 0;
 
-		int xMin = int.MaxValue;
-		int yMin = int.MaxValue;
-		int xMax = -1;
-		int yMax = -1;
-
 		Rect dstRect = new Rect(
 			partData.Position.x,
 			(result.height - partData.Position.y) - source.height,
@@ -62,8 +54,10 @@ public class Arcadian : MonoBehaviour
 			source.height
 		);
 
-		Debug.Log($"{partData.Name} + rect = {dstRect.x}, {dstRect.y}, {dstRect.xMax}, {dstRect.yMax}");
-		Debug.Log($"{source.width} x {source.height}");
+		//int debugXMin = int.MaxValue;
+		//int debugYMin = int.MaxValue;
+		//int debugXMax = -1;
+		//int debugYMax = -1;
 
 		for (int px = 0; px < rPixels.Length; px++)
 		{
@@ -75,10 +69,10 @@ public class Arcadian : MonoBehaviour
 				rPixels[px] = sPixels[sPx];
 				sPx++;
 
-				if (x < xMin) xMin = x;
-				else if (x > xMax) xMax = x;
-				if (y < yMin) yMin = y;
-				else if (y > yMax) yMax = y;
+				//if (x < debugXMin) debugXMin = x;
+				//else if (x > debugXMax) debugXMax = x;
+				//if (y < debugYMin) debugYMin = y;
+				//else if (y > debugYMax) debugYMax = y;
 			}
 			else
 			{
@@ -86,7 +80,9 @@ public class Arcadian : MonoBehaviour
 			}
 		}
 
-		Debug.Log($"{partData.Name} min = {xMin},{yMin} | maX = {xMax},{yMax}");
+		//Debug.Log($"{partData.Name} + rect = {dstRect.x}, {dstRect.y}, {dstRect.xMax}, {dstRect.yMax}");
+		//Debug.Log($"{source.width} x {source.height}");
+		//Debug.Log($"{partData.Name} min = {debugXMin},{debugYMin} | maX = {debugXMax},{debugYMax}");
 
 		result.SetPixels(rPixels, 0);
 		result.Apply();
