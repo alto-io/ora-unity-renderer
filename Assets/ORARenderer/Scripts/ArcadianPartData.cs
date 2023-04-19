@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace ORARenderer
 {
+	using System;
+	using System.Collections.Generic;
+
 	/// <summary>
 	/// Ordered by material order on arcadian.fbx
 	/// </summary>
