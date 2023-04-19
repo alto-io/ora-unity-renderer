@@ -15,8 +15,6 @@ public class SampleLoadArcadian : MonoBehaviour
 
 	public void Start()
 	{
-		var oraReader = ORARenderer.ORAReader.GetInstance();
-
 		var loadRequest = new ORARenderer.ArcadianPartLoadRequest
 		{
 			Skin = skin,
@@ -29,6 +27,7 @@ public class SampleLoadArcadian : MonoBehaviour
 			Head = head
 		};
 
+		var oraReader = ORARenderer.ORAReader.GetInstance();
 		var arcadianParts = oraReader.GetPartData(loadRequest);
 		arcadianLoader.ReplaceParts(arcadianParts);
 	}
