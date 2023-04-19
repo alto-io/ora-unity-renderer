@@ -1,6 +1,5 @@
 namespace ORARenderer
 {
-	using UnityEditor;
 	using UnityEngine;
 
 	public class ArcadianLoader : MonoBehaviour
@@ -9,16 +8,9 @@ namespace ORARenderer
 
 		public void ReplaceParts(ArcadianParts parts)
 		{
-			ReplacePart(arcadianRenderer.materials[0], parts.Parts.Find(x => x.Location == PartLocation.Skin));
-			ReplacePart(arcadianRenderer.materials[1], parts.Parts.Find(x => x.Location == PartLocation.Eyes));
-			ReplacePart(arcadianRenderer.materials[2], parts.Parts.Find(x => x.Location == PartLocation.Mouth));
-			ReplacePart(arcadianRenderer.materials[3], parts.Parts.Find(x => x.Location == PartLocation.Top));
-			ReplacePart(arcadianRenderer.materials[4], parts.Parts.Find(x => x.Location == PartLocation.Bottom));
-			ReplacePart(arcadianRenderer.materials[5], parts.Parts.Find(x => x.Location == PartLocation.RightHand));
-			ReplacePart(arcadianRenderer.materials[6], parts.Parts.Find(x => x.Location == PartLocation.LeftHand));
-			ReplacePart(arcadianRenderer.materials[7], parts.Parts.Find(x => x.Location == PartLocation.Head));
-
-			AssetDatabase.Refresh();
+			// materials should be the same order as PartLocation enum declaration
+			for (int i = 0; i <= 7; i++)
+				ReplacePart(arcadianRenderer.materials[i], parts.Parts.Find(x => x.Location == (PartLocation)i));
 		}
 
 		#region Private
@@ -60,7 +52,7 @@ namespace ORARenderer
 				}
 				else
 				{
-					rPixels[px] = UnityEngine.Color.clear;
+					rPixels[px] = Color.clear;
 				}
 			}
 
