@@ -1,48 +1,50 @@
 namespace ORARenderer
 {
-	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.IO.Compression;
 	using System.Linq;
 	using System.Xml.Linq;
+	using Unity.VisualScripting;
 	using UnityEditor;
 	using UnityEngine;
 
-	[Serializable]
-	public class PartData
-	{
-		public string Location;
-		public string Name;
-
-		public string Src;
-		public float Opacity;
-		public Vector2 Position;
-	}
-
-	[Serializable]
-	public class ArcadianParts
-	{
-		public List<PartData> Parts;
-	}
-
-	public class ORAReader : MonoBehaviour
+	public class ORAReader : Singleton<ORAReader>
 	{
 		private const string MAIN_DIRECTORY = "Assets/ORARenderer/";
 		private const string OUTPUT_SUB_DIR = "Extracted/";
 
-		[SerializeField] private Arcadian arcadian;
+		public static ORAReader Instance { get; private set; } = null;
+
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
-		[SerializeField] private ArcadianParts arcadianParts = new ArcadianParts();
 
 		private XDocument xmlStack;
 
-		public void Start()
+		public void Init()
 		{
 			ClearOutputDirectory();
-			GetAllParts();
 			AssetDatabase.Refresh();
-			arcadian.ReplaceParts(arcadianParts);
+		}
+
+		public ArcadianParts GetPartData(ArcadianPartLoadRequest request)
+		{
+			ArcadianParts newParts = ConvertLoadRequest(request);
+
+			string xmlPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + "/" + "stack.xml";
+			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
+				foreach (ZipArchiveEntry entry in zip.Entries)
+					if (entry.Name == "stack.xml")
+						entry.ExtractToFile(xmlPath);
+
+			xmlStack = XDocument.Load(xmlPath);
+
+			for (int i = 0; i < newParts.Parts.Count; i++)
+			{
+				PartData part = newParts.Parts[i];
+				newParts.Parts[i] = GetPartData(part.Name, part.Location);
+			}
+
+			return newParts;
 		}
 
 		private void ClearOutputDirectory()
@@ -63,30 +65,29 @@ namespace ORARenderer
 				dir.Delete(true);
 		}
 
-		private void GetAllParts()
+		private ArcadianParts ConvertLoadRequest(ArcadianPartLoadRequest request)
 		{
-			string xmlPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + "/" + "stack.xml";
-			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
-				foreach (ZipArchiveEntry entry in zip.Entries)
-					if (entry.Name == "stack.xml")
-						entry.ExtractToFile(xmlPath);
+			ArcadianParts newParts = new ArcadianParts();
 
-			xmlStack = XDocument.Load(xmlPath);
+			newParts.Parts.Add(new PartData { Name = request.Skin, Location = PartLocation.Skin });
+			newParts.Parts.Add(new PartData { Name = request.Eyes, Location = PartLocation.Eyes });
+			newParts.Parts.Add(new PartData { Name = request.Mouth, Location = PartLocation.Mouth });
+			newParts.Parts.Add(new PartData { Name = request.Top, Location = PartLocation.Top });
+			newParts.Parts.Add(new PartData { Name = request.Bottom, Location = PartLocation.Bottom });
+			newParts.Parts.Add(new PartData { Name = request.RightHand, Location = PartLocation.RightHand });
+			newParts.Parts.Add(new PartData { Name = request.LeftHand, Location = PartLocation.LeftHand });
+			newParts.Parts.Add(new PartData { Name = request.Head, Location = PartLocation.Head });
 
-			for (int i = 0; i < arcadianParts.Parts.Count; i++)
-			{
-				PartData part = arcadianParts.Parts[i];
-				arcadianParts.Parts[i] = GetPartData(part.Name, part.Location);
-			}
+			return newParts;
 		}
 
-		private PartData GetPartData(string partName, string partLocation)
+		private PartData GetPartData(string partName, PartLocation partLocation)
 		{
 			PartData newPart = new PartData();
 
 			IEnumerable<XElement> query = (
 				from element in xmlStack.Descendants("stack")
-				where (string)element.Attribute("name") == partLocation
+				where (element.Attribute("name") != null && ((string)element.Attribute("name")).Replace(" ", string.Empty) == partLocation.ToString())
 				select element
 			);
 
@@ -119,11 +120,8 @@ namespace ORARenderer
 
 				newPart.Src = pngPath;
 				newPart.Opacity = (float)partElement.Attribute("opacity");
-				newPart.Position = new Vector2
-				(
-					(float)partElement.Attribute("x"),
-					(float)partElement.Attribute("y")
-				);
+				newPart.PosX = (int)partElement.Attribute("x");
+				newPart.PosY = (int)partElement.Attribute("y");
 			}
 
 			return newPart;
