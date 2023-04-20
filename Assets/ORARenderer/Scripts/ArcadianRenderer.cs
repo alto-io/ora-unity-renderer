@@ -1,5 +1,6 @@
 namespace ORARenderer
 {
+	using System;
 	using UnityEngine;
 
 	public class ArcadianRenderer : MonoBehaviour
@@ -8,15 +9,26 @@ namespace ORARenderer
 
 		public void ReplaceParts(ArcadianParts parts)
 		{
+			if (parts == null)
+				return;
+
 			// materials should be the same order as PartLocation enum declaration
 			for (int i = 0; i <= 7; i++)
-				ReplacePart(arcadianRenderer.materials[i], parts.Parts.Find(x => x.Location == (PartLocation)i));
+			{
+				Predicate<PartData> match = x => x != null && x.Location == (PartLocation)i;
+
+				if (parts.Parts.Exists(match))
+					ReplacePart(arcadianRenderer.materials[i], parts.Parts.Find(match));
+			}
 		}
 
 		#region Private
 
 		private void ReplacePart(Material material, PartData partData)
 		{
+			if (partData == null)
+				return;
+
 			Texture2D sourceTex = new Texture2D(2, 2);
 			sourceTex.LoadImage(partData.Src);
 

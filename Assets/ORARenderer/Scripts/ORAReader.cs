@@ -1,5 +1,6 @@
 namespace ORARenderer
 {
+	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.IO.Compression;
@@ -20,18 +21,7 @@ namespace ORARenderer
 		{
 			ArcadianParts newParts = ConvertLoadRequest(request);
 
-			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
-			{
-				foreach (ZipArchiveEntry entry in zip.Entries)
-				{
-					if (entry.Name == "stack.xml")
-					{
-						xmlStack = XDocument.Load(entry.Open());
-						break;
-					}
-				}
-			}
-
+			ReadStackXml();
 			if (xmlStack == null)
 			{
 				Debug.LogError("Invalid ORA file! Does not contain stack.xml");
@@ -51,8 +41,6 @@ namespace ORARenderer
 
 		#region Private
 
-		private const string MAIN_DIRECTORY = "Assets/ORARenderer/";
-		private const string OUTPUT_SUB_DIR = "Extracted/";
 		private XDocument xmlStack;
 
 		private ArcadianParts ConvertLoadRequest(ArcadianPartLoadRequest request)
@@ -71,9 +59,25 @@ namespace ORARenderer
 			return newParts;
 		}
 
+		private void ReadStackXml()
+		{
+			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
+			{
+				foreach (ZipArchiveEntry entry in zip.Entries)
+				{
+					if (entry.Name == "stack.xml")
+					{
+						xmlStack = XDocument.Load(entry.Open());
+						break;
+					}
+				}
+			}
+		}
+
 		private PartData GetPartData(string partName, PartLocation partLocation)
 		{
-			PartData newPart = new PartData();
+			if (xmlStack == null)
+				return null;
 
 			IEnumerable<XElement> query = (
 				from element in xmlStack.Descendants("stack")
@@ -91,18 +95,28 @@ namespace ORARenderer
 				}
 			}
 
-			newPart.Location = partLocation;
-			newPart.Name = partName;
-
 			if (partElement == null)
-				return newPart;
+			{
+				if (string.IsNullOrWhiteSpace(partName))
+					Debug.LogError($"No part name specified for {partLocation}!");
+				else
+					Debug.LogError($"Part Name = {partName} in Part Location = {partLocation} does not exist!");
+
+				return null;
+			}
 
 			string pngFileName = (
 				(string)partElement.Attribute("src")).Substring(
 				((string)partElement.Attribute("src")).LastIndexOf('/') + 1
 			);
 
-			string pngPath = MAIN_DIRECTORY + OUTPUT_SUB_DIR + pngFileName;
+			if (string.IsNullOrWhiteSpace(pngFileName))
+			{
+				Debug.LogError($"Part Name = {partName} in Part Location = {partLocation} has no src value!");
+				return null;
+			}
+
+			PartData newPart = new PartData();
 
 			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
 			{
@@ -116,6 +130,8 @@ namespace ORARenderer
 				}
 			}
 
+			newPart.Location = partLocation;
+			newPart.Name = partName;
 			newPart.Opacity = (float)partElement.Attribute("opacity");
 			newPart.PosX = (int)partElement.Attribute("x");
 			newPart.PosY = (int)partElement.Attribute("y");
