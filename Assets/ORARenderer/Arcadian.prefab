@@ -432,14 +432,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arcadianLoader: {fileID: 5410736207077312494}
-  skin: Orc
-  eyes: Eyepatch
-  mouth: Cigar
-  top: Mage Robe
-  bottom: Challenger Leggings
-  rightHand: Mage Book R
-  leftHand: Shield L
-  head: Black Bandana
+  skin: Metal
+  eyes: ' Icy Stare'
+  mouth: Uwu Mouth
+  top: Sci-Fi Armor
+  bottom: Sci-Fi  Pants
+  rightHand: Glowing Hands R
+  leftHand: Gowing Hands L
+  head: AR Goggles
 --- !u!1 &5476280370962334038
 GameObject:
   m_ObjectHideFlags: 0

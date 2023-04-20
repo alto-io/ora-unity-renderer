@@ -4,14 +4,14 @@ public class SampleLoadArcadian : MonoBehaviour
 {
 	[SerializeField] private ORARenderer.ArcadianRenderer arcadianLoader;
 
-	[SerializeField] private string skin = "Orc";
-	[SerializeField] private string eyes = "Eyepatch";
-	[SerializeField] private string mouth = "Cigar";
-	[SerializeField] private string top = "Mage Robe";
-	[SerializeField] private string bottom = "Challenger Leggings";
-	[SerializeField] private string rightHand = "Mage Book R";
-	[SerializeField] private string leftHand = "Shield L";
-	[SerializeField] private string head = "Black Bandana";
+	[SerializeField] private string skin = "Metal";
+	[SerializeField] private string eyes = " Icy Stare";
+	[SerializeField] private string mouth = "Uwu Mouth";
+	[SerializeField] private string top = "Sci-Fi Armor";
+	[SerializeField] private string bottom = "Sci-Fi  Pants";
+	[SerializeField] private string rightHand = "Glowing Hands R";
+	[SerializeField] private string leftHand = "Gowing Hands L";
+	[SerializeField] private string head = "AR Goggles";
 
 	public void Start()
 	{
