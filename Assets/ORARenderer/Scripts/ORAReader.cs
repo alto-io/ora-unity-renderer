@@ -10,8 +10,6 @@ namespace ORARenderer
 
 	public class ORAReader : Singleton<ORAReader>
 	{
-		#region Public
-
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
 
 		public ArcadianParts GetPartData(ArcadianPartLoadRequest request)
@@ -33,8 +31,6 @@ namespace ORARenderer
 
 			return newParts;
 		}
-
-		#endregion
 
 		#region Private
 
