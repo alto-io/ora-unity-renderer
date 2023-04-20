@@ -207,7 +207,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8468794025696491355}
   - component: {fileID: 2276057138279013033}
-  - component: {fileID: 5410736207077312494}
   m_Layer: 0
   m_Name: avatar.Male
   m_TagString: Untagged
@@ -308,19 +307,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0015287288, y: 0.019153446, z: 0.0006941101}
     m_Extent: {x: 0.04212096, y: 0.03612762, z: 0.0022941122}
   m_DirtyAABB: 0
---- !u!114 &5410736207077312494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4016047951413965109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f65a8efed891804eba9a32e18ab7b34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arcadianRenderer: {fileID: 2276057138279013033}
 --- !u!1 &4350014036291398744
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +379,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5520413226739265745}
+  - component: {fileID: 4817743360330047037}
   - component: {fileID: 5410736206865766206}
   m_Layer: 0
   m_Name: Arcadian
@@ -419,6 +406,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4817743360330047037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5176784659355871851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f65a8efed891804eba9a32e18ab7b34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arcadianRenderer: {fileID: 2276057138279013033}
 --- !u!114 &5410736206865766206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,7 +431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ae53bd83a7fae64fbd12eaa270a2408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arcadianLoader: {fileID: 5410736207077312494}
+  arcadianLoader: {fileID: 4817743360330047037}
   skin: Metal
   eyes: ' Icy Stare'
   mouth: Uwu Mouth
