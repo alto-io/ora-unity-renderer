@@ -12,8 +12,6 @@ namespace ORARenderer
 	{
 		#region Public
 
-		public static ORAReader Instance { get; private set; } = null;
-
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
 
 		public ArcadianParts GetPartData(ArcadianPartLoadRequest request)
