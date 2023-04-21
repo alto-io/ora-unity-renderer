@@ -1,135 +1,140 @@
 namespace ORARenderer
 {
-	using System.Collections.Generic;
 	using System.IO;
 	using System.IO.Compression;
-	using System.Linq;
 	using System.Xml.Linq;
-	using UnityEditor;
 	using UnityEngine;
 
-	public class ORAReader : Singleton<ORAReader>
+	public class ORAReader : ORASingleton<ORAReader>
 	{
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
 
-		public ArcadianParts GetPartData(ArcadianPartLoadRequest request)
+		[SerializeField] private ArcadianParts arcadianReference = null;
+
+		public ArcadianParts GetPartData(ArcadianLoadRequest request)
 		{
-			ArcadianParts newParts = ConvertLoadRequest(request);
-
-			ReadStackXml();
-			if (xmlStack == null)
-			{
-				Debug.LogError("Invalid ORA file! Does not contain stack.xml");
+			if (request == null || request.Parts.Count == 0)
 				return null;
-			}
 
-			for (int i = 0; i < newParts.Parts.Count; i++)
+			if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
 			{
-				PartData part = newParts.Parts[i];
-				newParts.Parts[i] = GetPartData(part.Name, part.Location);
+				ReadStackXml();
+				if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
+					return null;
 			}
 
-			return newParts;
+			ArcadianParts newArcadian = new ArcadianParts();
+
+			foreach (PartsLoadRequest part in request.Parts)
+			{
+				if (newArcadian.Locations.Exists(x => x.Name == part.Location))
+					Debug.LogError($"Duplicates of {part.Location} exist! May cause errors");
+
+				PartData partData = FindPart(part);
+				var locationData = new LocationData { Name = part.Location };
+				locationData.Parts.Add(partData);
+				newArcadian.Locations.Add(locationData);
+			}
+
+			return newArcadian;
+		}
+
+		public ArcadianParts GetRandom()
+		{
+			if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
+			{
+				ReadStackXml();
+				if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
+					return null;
+			}
+
+			ArcadianParts newArcadian = new ArcadianParts();
+
+			foreach (LocationData location in arcadianReference.Locations)
+			{
+				var newLocation = new LocationData { Name = location.Name, };
+				newLocation.Parts.Add(new PartData(location.Parts[Random.Range(0, location.Parts.Count)]));
+				newArcadian.Locations.Add(newLocation);
+			}
+
+			return newArcadian;
 		}
 
 		#region Private
 
-		private XDocument xmlStack;
-
-		private ArcadianParts ConvertLoadRequest(ArcadianPartLoadRequest request)
-		{
-			ArcadianParts newParts = new ArcadianParts();
-
-			newParts.Parts.Add(new PartData { Name = request.Skin, Location = PartLocation.Skin });
-			newParts.Parts.Add(new PartData { Name = request.Eyes, Location = PartLocation.Eyes });
-			newParts.Parts.Add(new PartData { Name = request.Mouth, Location = PartLocation.Mouth });
-			newParts.Parts.Add(new PartData { Name = request.Top, Location = PartLocation.Top });
-			newParts.Parts.Add(new PartData { Name = request.Bottom, Location = PartLocation.Bottom });
-			newParts.Parts.Add(new PartData { Name = request.RightHand, Location = PartLocation.RightHand });
-			newParts.Parts.Add(new PartData { Name = request.LeftHand, Location = PartLocation.LeftHand });
-			newParts.Parts.Add(new PartData { Name = request.Head, Location = PartLocation.Head });
-
-			return newParts;
-		}
+		private void Awake() => arcadianReference = null;
 
 		private void ReadStackXml()
 		{
+			XDocument stackXml = null;
+
 			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
 			{
 				foreach (ZipArchiveEntry entry in zip.Entries)
 				{
 					if (entry.Name == "stack.xml")
 					{
-						xmlStack = XDocument.Load(entry.Open());
+						stackXml = XDocument.Load(entry.Open());
 						break;
 					}
 				}
 			}
+
+			if (stackXml == null)
+			{
+				Debug.LogError("Invalid .ora file! stack.xml does not exist");
+				arcadianReference = null;
+				return;
+			}
+
+			arcadianReference = new ArcadianParts();
+
+			foreach (XElement image in stackXml.Elements())
+				foreach (XElement topStack in image.Elements())
+					foreach (XElement root in topStack.Elements())
+						foreach (XElement layer in root.Elements())
+							ReadLayerXml(layer);
 		}
 
-		private PartData GetPartData(string partName, PartLocation partLocation)
+		private void ReadLayerXml(XElement layer)
 		{
-			if (xmlStack == null)
-				return null;
-
-			IEnumerable<XElement> query = (
-				from element in xmlStack.Descendants("stack")
-				where (element.Attribute("name") != null && ((string)element.Attribute("name")).Replace(" ", string.Empty) == partLocation.ToString())
-				select element
-			);
-
-			XElement partElement = null;
-			foreach (XElement element in query.Descendants().Where(p => !p.HasElements))
+			var locationData = new LocationData
 			{
-				if ((string)element.Attribute("name") == partName)
+				Name = (string)layer.Attribute("name"),
+				Opacity = (float)layer.Attribute("opacity"),
+			};
+
+			foreach (XElement partElement in layer.Elements())
+			{
+				var partData = new PartData()
 				{
-					partElement = element;
-					break;
-				}
+					Name = (string)partElement.Attribute("name"),
+					Location = locationData.Name,
+					Src = GetPartSrc(partElement),
+
+					Opacity = (float)partElement.Attribute("opacity"),
+					PosX = (int)partElement.Attribute("x"),
+					PosY = (int)partElement.Attribute("y")
+				};
+				locationData.Parts.Add(partData);
 			}
 
-			if (partElement == null)
-			{
-				if (string.IsNullOrWhiteSpace(partName))
-					Debug.LogError($"No part name specified for {partLocation}!");
-				else
-					Debug.LogError($"Part Name = {partName} in Part Location = {partLocation} does not exist!");
+			arcadianReference.Locations.Add(locationData);
+		}
 
-				return null;
-			}
-
+		private byte[] GetPartSrc(XElement part)
+		{
 			string pngFileName = (
-				(string)partElement.Attribute("src")).Substring(
-				((string)partElement.Attribute("src")).LastIndexOf('/') + 1
+				(string)part.Attribute("src")).Substring(
+				((string)part.Attribute("src")).LastIndexOf('/') + 1
 			);
-
-			if (string.IsNullOrWhiteSpace(pngFileName))
-			{
-				Debug.LogError($"Part Name = {partName} in Part Location = {partLocation} has no src value!");
-				return null;
-			}
-
-			PartData newPart = new PartData();
 
 			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
-			{
 				foreach (ZipArchiveEntry entry in zip.Entries)
-				{
 					if (entry.Name == pngFileName)
-					{
-						newPart.Src = ConvertStreamToByteArray(entry.Open());
-						break;
-					}
-				}
-			}
+						return ConvertStreamToByteArray(entry.Open());
 
-			newPart.Location = partLocation;
-			newPart.Name = partName;
-			newPart.Opacity = (float)partElement.Attribute("opacity");
-			newPart.PosX = (int)partElement.Attribute("x");
-			newPart.PosY = (int)partElement.Attribute("y");
-
-			return newPart;
+			return null;
 		}
 
 		private byte[] ConvertStreamToByteArray(Stream stream)
@@ -139,6 +144,33 @@ namespace ORARenderer
 				stream.CopyTo(ms);
 				return ms.ToArray();
 			}
+		}
+
+		private PartData FindPart(PartsLoadRequest part)
+		{
+			var defaultData = new PartData
+			{
+				Name = part.Name,
+				Location = part.Location
+			};
+
+			if (!arcadianReference.Locations.Exists(x => x.Name == part.Location))
+			{
+				Debug.LogError($"Part Location: {part.Location} does not exist!");
+				return defaultData;
+			}
+
+			var locationRef = arcadianReference.Locations.Find(x => x.Name == part.Location);
+
+			if (!locationRef.Parts.Exists(x => x.Name == part.Name))
+			{
+				Debug.LogError($"Part Name: {part.Name} at Part Location: {part.Location} does not exist!");
+				return defaultData;
+			}
+
+			var partRef = locationRef.Parts.Find(x => x.Name == part.Name);
+
+			return new PartData(partRef);
 		}
 
 		#endregion

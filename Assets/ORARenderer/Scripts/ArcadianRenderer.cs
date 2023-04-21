@@ -1,28 +1,62 @@
 namespace ORARenderer
 {
 	using System;
+	using System.Collections.Generic;
 	using UnityEngine;
 
 	public class ArcadianRenderer : MonoBehaviour
 	{
 		[SerializeField] private SkinnedMeshRenderer arcadianRenderer;
 
-		public void ReplaceParts(ArcadianParts parts)
+		/// <summary>
+		/// Ordered the same as the fbx material array
+		/// </summary>
+		[SerializeField] List<string> materialLocationNames = new List<string>()
 		{
-			if (parts == null)
+			"Skin",
+			"Eyes",
+			"Mouth",
+			"Top",
+			"Bottom",
+			"Right Hand",
+			"Left Hand",
+			"Head"
+		};
+
+		public void RequestParts(ArcadianLoadRequest loadRequest)
+		{
+			if (loadRequest == null)
 				return;
 
-			// materials should be the same order as PartLocation enum declaration
-			for (int i = 0; i <= 7; i++)
-			{
-				Predicate<PartData> match = x => x != null && x.Location == (PartLocation)i;
+			ArcadianParts newParts = ORAReader.GetInstance().GetPartData(loadRequest);
+			ReplaceParts(newParts);
+		}
 
-				if (parts.Parts.Exists(match))
-					ReplacePart(arcadianRenderer.materials[i], parts.Parts.Find(match));
-			}
+		public void RequestPartsRandom()
+		{
+			ArcadianParts randomParts = ORAReader.GetInstance().GetRandom();
+			ReplaceParts(randomParts);
 		}
 
 		#region Private
+
+		private void ReplaceParts(ArcadianParts newParts)
+		{
+			for (int i = 0; i <= 7; i++)
+			{
+				Predicate<LocationData> match = x => x != null && x.Name == materialLocationNames[i];
+
+				if (!newParts.Locations.Exists(match))
+					continue;
+
+				var location = newParts.Locations.Find(match);
+
+				if (location.Parts.Count == 0)
+					continue;
+
+				ReplacePart(arcadianRenderer.materials[i], location.Parts[0]);
+			}
+		}
 
 		private void ReplacePart(Material material, PartData partData)
 		{
