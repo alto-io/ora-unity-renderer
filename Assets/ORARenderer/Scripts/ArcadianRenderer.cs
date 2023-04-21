@@ -9,7 +9,7 @@ namespace ORARenderer
 		[SerializeField] private SkinnedMeshRenderer arcadianRenderer;
 
 		/// <summary>
-		/// Ordered the same as the fbx material array
+		/// Ordered the same as the materials of the SkinnedMeshRenderer 
 		/// </summary>
 		[SerializeField] List<string> materialLocationNames = new List<string>()
 		{
@@ -42,8 +42,17 @@ namespace ORARenderer
 
 		private void ReplaceParts(ArcadianParts newParts)
 		{
-			for (int i = 0; i <= 7; i++)
+			for (int i = 0; i < arcadianRenderer.materials.Length; i++)
 			{
+				if (i >= materialLocationNames.Count)
+				{
+					Debug.LogError(
+						"Not all material locations are specified in ArcadianRenderer.materialLocationNames!" +
+						" Add location names for all mats used by the SkinnedMeshRenderer to this List, and make sure they are the same order."
+					);
+					return;
+				}
+
 				Predicate<LocationData> match = x => x != null && x.Name == materialLocationNames[i];
 
 				if (!newParts.Locations.Exists(match))
