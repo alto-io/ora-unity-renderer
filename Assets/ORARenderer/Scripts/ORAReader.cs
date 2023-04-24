@@ -11,6 +11,8 @@ namespace ORARenderer
 
 		[SerializeField] private ArcadianParts arcadianReference = null;
 
+		public ArcadianParts ArcadianReference { get { return arcadianReference; } }
+
 		public ArcadianParts GetPartData(ArcadianLoadRequest request)
 		{
 			if (request == null || request.Parts.Count == 0)
@@ -90,10 +92,15 @@ namespace ORARenderer
 			arcadianReference = new ArcadianParts();
 
 			foreach (XElement image in stackXml.Elements())
+			{
+				arcadianReference.canvasSizeW = (int)image.Attribute("w");
+				arcadianReference.canvasSizeH = (int)image.Attribute("h");
+
 				foreach (XElement topStack in image.Elements())
 					foreach (XElement root in topStack.Elements())
 						foreach (XElement layer in root.Elements())
 							ReadLayerXml(layer);
+			}
 		}
 
 		private void ReadLayerXml(XElement layer)

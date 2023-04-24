@@ -52,6 +52,8 @@ namespace ORARenderer
 	[Serializable]
 	public class ArcadianParts
 	{
+		public int canvasSizeW;
+		public int canvasSizeH;
 		public List<LocationData> Locations = new List<LocationData>();
 	}
 }

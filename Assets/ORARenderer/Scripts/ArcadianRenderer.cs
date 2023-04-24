@@ -11,7 +11,7 @@ namespace ORARenderer
 		/// <summary>
 		/// Ordered the same as the materials of the SkinnedMeshRenderer 
 		/// </summary>
-		[SerializeField] List<string> materialLocationNames = new List<string>()
+		[SerializeField] private List<string> materialLocationNames = new List<string>()
 		{
 			"Skin",
 			"Eyes",
@@ -28,17 +28,25 @@ namespace ORARenderer
 			if (loadRequest == null)
 				return;
 
-			ArcadianParts newParts = ORAReader.GetInstance().GetPartData(loadRequest);
+			if (oraReader == null)
+				oraReader = ORAReader.GetInstance();
+
+			ArcadianParts newParts = oraReader.GetPartData(loadRequest);
 			ReplaceParts(newParts);
 		}
 
 		public void RequestPartsRandom()
 		{
-			ArcadianParts randomParts = ORAReader.GetInstance().GetRandom();
+			if (oraReader == null)
+				oraReader = ORAReader.GetInstance();
+
+			ArcadianParts randomParts = oraReader.GetRandom();
 			ReplaceParts(randomParts);
 		}
 
 		#region Private
+
+		private ORAReader oraReader = null;
 
 		private void ReplaceParts(ArcadianParts newParts)
 		{
@@ -75,7 +83,7 @@ namespace ORARenderer
 			Texture2D sourceTex = new Texture2D(2, 2);
 			sourceTex.LoadImage(partData.Src);
 
-			Texture2D newTex = ResizePart(sourceTex, partData, 399, 399);
+			Texture2D newTex = ResizePart(sourceTex, partData, oraReader.ArcadianReference.canvasSizeW, oraReader.ArcadianReference.canvasSizeH);
 
 			material.mainTexture = newTex;
 		}
