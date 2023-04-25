@@ -31,6 +31,12 @@ namespace ORARenderer
 			if (oraReader == null)
 				oraReader = ORAReader.GetInstance();
 
+			if (oraReader == null)
+			{
+				Debug.LogWarning("ORA renderer could not instantiate!");
+				return;
+			}
+
 			ArcadianParts newParts = oraReader.GetPartData(loadRequest);
 			ReplaceParts(newParts);
 		}

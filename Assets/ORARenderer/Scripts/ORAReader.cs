@@ -5,7 +5,7 @@ namespace ORARenderer
 	using System.Xml.Linq;
 	using UnityEngine;
 
-	public class ORAReader : ORASingleton<ORAReader>
+	public class ORAReader : MonoBehaviour
 	{
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
 
@@ -62,9 +62,29 @@ namespace ORARenderer
 			return newArcadian;
 		}
 
+		#region Static
+
+		public static ORAReader GetInstance()
+		{
+			if (instance == null)
+				instance = FindObjectOfType<ORAReader>();
+			else if (instance != FindObjectOfType<ORAReader>())
+				Destroy(FindObjectOfType<ORAReader>());
+
+			return instance;
+		}
+
+		private static ORAReader instance = null;
+
+		#endregion
+
 		#region Private
 
-		private void Awake() => arcadianReference = null;
+		private void Awake()
+		{
+			DontDestroyOnLoad(gameObject);
+			arcadianReference = null;
+		}
 
 		private void ReadStackXml()
 		{
