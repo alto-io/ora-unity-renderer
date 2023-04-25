@@ -380,7 +380,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5520413226739265745}
   - component: {fileID: 4817743360330047037}
-  - component: {fileID: 5410736206865766206}
   m_Layer: 0
   m_Name: Arcadian
   m_TagString: Untagged
@@ -428,38 +427,6 @@ MonoBehaviour:
   - Right Hand
   - Left Hand
   - Head
---- !u!114 &5410736206865766206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5176784659355871851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ae53bd83a7fae64fbd12eaa270a2408, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arcadianRenderer: {fileID: 4817743360330047037}
-  isRandom: 1
-  loadRequest:
-    Parts:
-    - Name: Metal
-      Location: Skin
-    - Name: ' Icy Stare'
-      Location: Eyes
-    - Name: Uwu Mouth
-      Location: Mouth
-    - Name: Sci-Fi Armor
-      Location: Top
-    - Name: Sci-Fi  Pants
-      Location: Bottom
-    - Name: Glowing Hands R
-      Location: Right Hand
-    - Name: Gowing Hands L
-      Location: Left Hand
-    - Name: AR Goggles
-      Location: Head
 --- !u!1 &5476280370962334038
 GameObject:
   m_ObjectHideFlags: 0
