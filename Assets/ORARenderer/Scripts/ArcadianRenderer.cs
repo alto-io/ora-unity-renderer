@@ -56,26 +56,40 @@ namespace ORARenderer
 
 		private void ReplaceParts(ArcadianParts newParts)
 		{
+			bool isErrorLogged = false;
 			for (int i = 0; i < arcadianRenderer.materials.Length; i++)
 			{
 				if (i >= materialLocationNames.Count)
 				{
-					Debug.LogError(
-						"Not all material locations are specified in ArcadianRenderer.materialLocationNames!" +
-						" Add location names for all mats used by the SkinnedMeshRenderer to this List, and make sure they are the same order."
-					);
+					if (!isErrorLogged)
+					{
+						Debug.LogError(
+							"Not all material locations are specified in ArcadianRenderer.materialLocationNames!" +
+							" Add location names for all mats used by the SkinnedMeshRenderer to this List, and make sure they are the same order."
+						);
+
+						isErrorLogged = true;
+					}
+
+					LoadBlankPart(arcadianRenderer.materials[i]);
 					return;
 				}
 
 				Predicate<LocationData> match = x => x != null && x.Name == materialLocationNames[i];
 
 				if (!newParts.Locations.Exists(match))
+				{
+					LoadBlankPart(arcadianRenderer.materials[i]);
 					continue;
+				}
 
 				var location = newParts.Locations.Find(match);
 
 				if (location.Parts.Count == 0)
+				{
+					LoadBlankPart(arcadianRenderer.materials[i]);
 					continue;
+				}
 
 				ReplacePart(arcadianRenderer.materials[i], location.Parts[0]);
 			}
@@ -83,15 +97,16 @@ namespace ORARenderer
 
 		private void ReplacePart(Material material, PartData partData)
 		{
-			if (partData == null)
+			if (partData == null || partData.Src == null || partData.Src.Length == 0)
+			{
+				LoadBlankPart(material);
 				return;
+			}
 
 			Texture2D sourceTex = new Texture2D(2, 2);
 			sourceTex.LoadImage(partData.Src);
 
-			Texture2D newTex = ResizePart(sourceTex, partData, oraReader.ArcadianReference.canvasSizeW, oraReader.ArcadianReference.canvasSizeH);
-
-			material.mainTexture = newTex;
+			material.mainTexture = ResizePart(sourceTex, partData, oraReader.ArcadianReference.canvasSizeW, oraReader.ArcadianReference.canvasSizeH);
 		}
 
 		private Texture2D ResizePart(Texture2D source, PartData partData, int targetWidth, int targetHeight)
@@ -128,6 +143,20 @@ namespace ORARenderer
 			result.SetPixels(rPixels, 0);
 			result.Apply();
 			return result;
+		}
+
+		private void LoadBlankPart(Material material)
+		{
+			Texture2D blankTexture = new Texture2D(1, 1);
+
+			Color[] pixels = blankTexture.GetPixels(0);
+			for (int px = 0; px < pixels.Length; px++)
+				pixels[px] = Color.clear;
+
+			blankTexture.SetPixels(pixels, 0);
+			blankTexture.Apply();
+
+			material.mainTexture = blankTexture;
 		}
 
 		#endregion

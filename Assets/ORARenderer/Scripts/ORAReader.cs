@@ -180,6 +180,9 @@ namespace ORARenderer
 				Name = part.Name,
 				Location = part.Location
 			};
+			
+			if (string.IsNullOrWhiteSpace(part.Name))
+				return defaultData;
 
 			if (!arcadianReference.Locations.Exists(x => x.Name == part.Location))
 			{
