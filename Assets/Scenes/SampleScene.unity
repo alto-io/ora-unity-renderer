@@ -123,6 +123,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &314344182
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1300088251262857424, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_Name
+      value: ORA Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300088251262857426, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9225dd9fe2db9234587e4b466b185fb8, type: 3}
 --- !u!1 &509020093 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7067021955198759186, guid: 532b93761b51cbe4abd5e9bef33b6129, type: 3}
@@ -392,60 +449,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 532b93761b51cbe4abd5e9bef33b6129, type: 3}
---- !u!1001 &9138357941792013176
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 9138357941927147488, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_Name
-      value: ORA Manager V2
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9138357941927147490, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: edaec7f87d9f57e41bdbb44f69a53301, type: 3}
