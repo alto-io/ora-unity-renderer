@@ -7,9 +7,12 @@ namespace ORARenderer
 
 	public class ORAReader : MonoBehaviour
 	{
+		[Tooltip("TEMP")]
 		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
+		[SerializeField] private string oraPathV2 = "Assets/ORARenderer/arcadians_4_28.ora";
 
-		[SerializeField] private ArcadianParts arcadianReference = null;
+		//[SerializeField]
+		private ArcadianParts arcadianReference = null;
 
 		public ArcadianParts ArcadianReference { get { return arcadianReference; } }
 
@@ -88,9 +91,16 @@ namespace ORARenderer
 
 		private void ReadStackXml()
 		{
+			arcadianReference = new ArcadianParts();
+			ReadFromOra(oraPath);
+			ReadFromOra(oraPathV2);
+		}
+
+		private void ReadFromOra(string path)
+		{
 			XDocument stackXml = null;
 
-			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
+			using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
 			{
 				foreach (ZipArchiveEntry entry in zip.Entries)
 				{
@@ -105,11 +115,8 @@ namespace ORARenderer
 			if (stackXml == null)
 			{
 				Debug.LogError("Invalid .ora file! stack.xml does not exist");
-				arcadianReference = null;
 				return;
 			}
-
-			arcadianReference = new ArcadianParts();
 
 			foreach (XElement image in stackXml.Elements())
 			{
@@ -119,17 +126,29 @@ namespace ORARenderer
 				foreach (XElement topStack in image.Elements())
 					foreach (XElement root in topStack.Elements())
 						foreach (XElement layer in root.Elements())
-							ReadLayerXml(layer);
+							ReadLayerXml(layer, path);
 			}
 		}
 
-		private void ReadLayerXml(XElement layer)
+		private void ReadLayerXml(XElement layer, string path)
 		{
-			var locationData = new LocationData
+			LocationData locationData;
+			string locationName = (string)layer.Attribute("name");
+			bool isNewLocation = false;
+
+			if (arcadianReference.Locations.Exists(x => x.Name == locationName))
 			{
-				Name = (string)layer.Attribute("name"),
-				Opacity = (float)layer.Attribute("opacity"),
-			};
+				locationData = arcadianReference.Locations.Find(x => x.Name == locationName);
+			}
+			else
+			{
+				locationData = new LocationData
+				{
+					Name = locationName,
+					Opacity = (float)layer.Attribute("opacity"),
+				};
+				isNewLocation = true;
+			}
 
 			foreach (XElement partElement in layer.Elements())
 			{
@@ -137,7 +156,7 @@ namespace ORARenderer
 				{
 					Name = (string)partElement.Attribute("name"),
 					Location = locationData.Name,
-					Src = GetPartSrc(partElement),
+					Src = GetPartSrc(partElement, path),
 
 					Opacity = (float)partElement.Attribute("opacity"),
 					PosX = (int)partElement.Attribute("x"),
@@ -146,17 +165,18 @@ namespace ORARenderer
 				locationData.Parts.Add(partData);
 			}
 
-			arcadianReference.Locations.Add(locationData);
+			if (isNewLocation)
+				arcadianReference.Locations.Add(locationData);
 		}
 
-		private byte[] GetPartSrc(XElement part)
+		private byte[] GetPartSrc(XElement part, string path)
 		{
 			string pngFileName = (
 				(string)part.Attribute("src")).Substring(
 				((string)part.Attribute("src")).LastIndexOf('/') + 1
 			);
 
-			using (ZipArchive zip = ZipFile.Open(oraPath, ZipArchiveMode.Read))
+			using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
 				foreach (ZipArchiveEntry entry in zip.Entries)
 					if (entry.Name == pngFileName)
 						return ConvertStreamToByteArray(entry.Open());

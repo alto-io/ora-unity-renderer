@@ -45,7 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oraPath: Assets/ORARenderer/arcadians.ora
-  arcadianReference:
-    canvasSizeW: 0
-    canvasSizeH: 0
-    Locations: []
+  oraPathV2: Assets/ORARenderer/arcadians_4_28.ora
