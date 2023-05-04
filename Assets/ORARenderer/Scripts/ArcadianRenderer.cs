@@ -23,6 +23,8 @@ namespace ORARenderer
 			"Head"
 		};
 
+		public List<string> MaterialLocationNames { get { return materialLocationNames; } }
+
 		public void RequestParts(ArcadianLoadRequest loadRequest)
 		{
 			if (loadRequest == null)
