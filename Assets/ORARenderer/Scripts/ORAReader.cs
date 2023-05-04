@@ -87,6 +87,7 @@ namespace ORARenderer
 		{
 			DontDestroyOnLoad(gameObject);
 			arcadianReference = null;
+			ReadStackXml();
 		}
 
 		private void ReadStackXml()

@@ -75,23 +75,28 @@ namespace ORARenderer
 					return;
 				}
 
-				Predicate<LocationData> match = x => x != null && x.Name == materialLocationNames[i];
-
-				if (!newParts.Locations.Exists(match))
+				else if (!oraReader.ArcadianReference.Locations.Exists(x => x.Name == materialLocationNames[i]))
 				{
+					Debug.LogError($"Location name {materialLocationNames[i]} does not exist in the ORA file!");
 					LoadBlankPart(arcadianRenderer.materials[i]);
+					continue;
+				}
+
+				Predicate<LocationData> match = x => x != null && x.Name == materialLocationNames[i];
+				var defaultPart = oraReader.ArcadianReference.Locations.Find(match).Parts[0];
+
+				if (newParts == null || newParts.Locations == null || !newParts.Locations.Exists(match))
+				{
+					ReplacePart(arcadianRenderer.materials[i], defaultPart);
 					continue;
 				}
 
 				var location = newParts.Locations.Find(match);
 
 				if (location.Parts.Count == 0)
-				{
-					LoadBlankPart(arcadianRenderer.materials[i]);
-					continue;
-				}
-
-				ReplacePart(arcadianRenderer.materials[i], location.Parts[0]);
+					ReplacePart(arcadianRenderer.materials[i], defaultPart);
+				else
+					ReplacePart(arcadianRenderer.materials[i], location.Parts[0]);
 			}
 		}
 
