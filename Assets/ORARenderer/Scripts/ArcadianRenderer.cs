@@ -72,12 +72,11 @@ namespace ORARenderer
 					}
 
 					LoadBlankPart(arcadianRenderer.materials[i]);
-					return;
+					continue;
 				}
 
 				else if (!oraReader.ArcadianReference.Locations.Exists(x => x.Name == materialLocationNames[i]))
 				{
-					Debug.LogError($"Location name {materialLocationNames[i]} does not exist in the ORA file!");
 					LoadBlankPart(arcadianRenderer.materials[i]);
 					continue;
 				}
