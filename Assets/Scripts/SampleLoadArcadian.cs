@@ -13,6 +13,5 @@ public class SampleLoadArcadian : MonoBehaviour
 			arcadianRenderer.RequestPartsRandom();
 		else
 			arcadianRenderer.RequestParts(loadRequest);
-
 	}
 }

@@ -1,32 +1,28 @@
 namespace ORARenderer
 {
+	using System.Collections;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.IO.Compression;
 	using System.Xml.Linq;
 	using UnityEngine;
+	using UnityEngine.Networking;
 
 	public class ORAReader : MonoBehaviour
 	{
-		[Tooltip("TEMP")]
-		[SerializeField] private string oraPath = "Assets/ORARenderer/arcadians.ora";
-		[SerializeField] private string oraPathV2 = "Assets/ORARenderer/arcadians_4_28.ora";
+		[SerializeField] private List<string> oraFileNames = new List<string>();
 
 		//[SerializeField]
 		private ArcadianParts arcadianReference = null;
 
 		public ArcadianParts ArcadianReference { get { return arcadianReference; } }
 
+		public bool IsLoaded { get; private set; } = false;
+
 		public ArcadianParts GetPartData(ArcadianLoadRequest request)
 		{
-			if (request == null || request.Parts.Count == 0)
+			if (!IsLoaded || request == null || request.Parts.Count == 0)
 				return null;
-
-			if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
-			{
-				ReadStackXml();
-				if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
-					return null;
-			}
 
 			ArcadianParts newArcadian = new ArcadianParts();
 
@@ -46,19 +42,15 @@ namespace ORARenderer
 
 		public ArcadianParts GetRandom()
 		{
-			if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
-			{
-				ReadStackXml();
-				if (arcadianReference == null || arcadianReference.Locations == null || arcadianReference.Locations.Count == 0)
-					return null;
-			}
+			if (!IsLoaded)
+				return null;
 
 			ArcadianParts newArcadian = new ArcadianParts();
 
 			foreach (LocationData location in arcadianReference.Locations)
 			{
 				var newLocation = new LocationData { Name = location.Name, };
-				newLocation.Parts.Add(new PartData(location.Parts[Random.Range(0, location.Parts.Count)]));
+				newLocation.Parts.Add(new PartData(location.Parts[UnityEngine.Random.Range(0, location.Parts.Count)]));
 				newArcadian.Locations.Add(newLocation);
 			}
 
@@ -87,21 +79,42 @@ namespace ORARenderer
 		{
 			DontDestroyOnLoad(gameObject);
 			arcadianReference = null;
-			ReadStackXml();
+			StartCoroutine(LoadOraFilesCR());
 		}
 
-		private void ReadStackXml()
+		private IEnumerator LoadOraFilesCR()
 		{
+			IsLoaded = false;
 			arcadianReference = new ArcadianParts();
-			ReadFromOra(oraPath);
-			ReadFromOra(oraPathV2);
+			foreach (string oraFile in oraFileNames)
+				yield return GetOraStreamCR(Application.streamingAssetsPath + "\\" + oraFile);
+			IsLoaded = true;
 		}
 
-		private void ReadFromOra(string path)
+		private IEnumerator GetOraStreamCR(string url)
+		{
+			using (UnityWebRequest request = UnityWebRequest.Get(url))
+			{
+				yield return request.SendWebRequest();
+
+				if (request.result == UnityWebRequest.Result.Success)
+				{
+					yield return new WaitUntil(() => request.downloadHandler.isDone);
+					MemoryStream memStream = new MemoryStream(request.downloadHandler.data, true);
+					ReadFromStream(memStream);
+				}
+				else
+				{
+					Debug.LogError("Could not get file");
+				}
+			}
+		}
+
+		private void ReadFromStream(MemoryStream stream)
 		{
 			XDocument stackXml = null;
 
-			using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
+			using (ZipArchive zip = new ZipArchive(stream))
 			{
 				foreach (ZipArchiveEntry entry in zip.Entries)
 				{
@@ -111,27 +124,27 @@ namespace ORARenderer
 						break;
 					}
 				}
-			}
 
-			if (stackXml == null)
-			{
-				Debug.LogError("Invalid .ora file! stack.xml does not exist");
-				return;
-			}
+				if (stackXml == null)
+				{
+					Debug.LogError("Invalid .ora file! stack.xml does not exist");
+					return;
+				}
 
-			foreach (XElement image in stackXml.Elements())
-			{
-				arcadianReference.canvasSizeW = (int)image.Attribute("w");
-				arcadianReference.canvasSizeH = (int)image.Attribute("h");
+				foreach (XElement image in stackXml.Elements())
+				{
+					arcadianReference.canvasSizeW = (int)image.Attribute("w");
+					arcadianReference.canvasSizeH = (int)image.Attribute("h");
 
-				foreach (XElement topStack in image.Elements())
-					foreach (XElement root in topStack.Elements())
-						foreach (XElement layer in root.Elements())
-							ReadLayerXml(layer, path);
+					foreach (XElement topStack in image.Elements())
+						foreach (XElement root in topStack.Elements())
+							foreach (XElement layer in root.Elements())
+								ReadLayerXml(layer, zip);
+				}
 			}
 		}
 
-		private void ReadLayerXml(XElement layer, string path)
+		private void ReadLayerXml(XElement layer, ZipArchive zip)
 		{
 			LocationData locationData;
 			string locationName = (string)layer.Attribute("name");
@@ -157,7 +170,7 @@ namespace ORARenderer
 				{
 					Name = (string)partElement.Attribute("name"),
 					Location = locationData.Name,
-					Src = GetPartSrc(partElement, path),
+					Src = GetPartSrc(partElement, zip),
 
 					Opacity = (float)partElement.Attribute("opacity"),
 					PosX = (int)partElement.Attribute("x"),
@@ -170,17 +183,16 @@ namespace ORARenderer
 				arcadianReference.Locations.Add(locationData);
 		}
 
-		private byte[] GetPartSrc(XElement part, string path)
+		private byte[] GetPartSrc(XElement part, ZipArchive zip)
 		{
 			string pngFileName = (
 				(string)part.Attribute("src")).Substring(
 				((string)part.Attribute("src")).LastIndexOf('/') + 1
 			);
 
-			using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
-				foreach (ZipArchiveEntry entry in zip.Entries)
-					if (entry.Name == pngFileName)
-						return ConvertStreamToByteArray(entry.Open());
+			foreach (ZipArchiveEntry entry in zip.Entries)
+				if (entry.Name == pngFileName)
+					return ConvertStreamToByteArray(entry.Open());
 
 			return null;
 		}

@@ -44,5 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2b62e89d7b182b428b00c7e830c82e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oraPath: Assets/ORARenderer/arcadians.ora
-  oraPathV2: Assets/ORARenderer/arcadians_v2.ora
+  oraFileNames:
+  - arcadians.ora
+  - arcadians_v2.ora

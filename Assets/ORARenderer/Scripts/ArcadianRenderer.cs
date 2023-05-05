@@ -1,6 +1,7 @@
 namespace ORARenderer
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using UnityEngine;
 
@@ -25,10 +26,18 @@ namespace ORARenderer
 
 		public List<string> MaterialLocationNames { get { return materialLocationNames; } }
 
-		public void RequestParts(ArcadianLoadRequest loadRequest)
+		public void RequestParts(ArcadianLoadRequest loadRequest) => StartCoroutine(RequestPartsCR(loadRequest));
+
+		public void RequestPartsRandom() => StartCoroutine(RequestRandomCR());
+
+		#region Private
+
+		private ORAReader oraReader = null;
+
+		private IEnumerator RequestPartsCR(ArcadianLoadRequest loadRequest)
 		{
 			if (loadRequest == null)
-				return;
+				yield break;
 
 			if (oraReader == null)
 				oraReader = ORAReader.GetInstance();
@@ -36,25 +45,31 @@ namespace ORARenderer
 			if (oraReader == null)
 			{
 				Debug.LogWarning("ORA renderer could not instantiate!");
-				return;
+				yield break;
 			}
+
+			yield return new WaitUntil(() => oraReader.IsLoaded);
 
 			ArcadianParts newParts = oraReader.GetPartData(loadRequest);
 			ReplaceParts(newParts);
 		}
 
-		public void RequestPartsRandom()
+		private IEnumerator RequestRandomCR()
 		{
 			if (oraReader == null)
 				oraReader = ORAReader.GetInstance();
 
+			if (oraReader == null)
+			{
+				Debug.LogWarning("ORA renderer could not instantiate!");
+				yield break;
+			}
+
+			yield return new WaitUntil(() => oraReader.IsLoaded);
+
 			ArcadianParts randomParts = oraReader.GetRandom();
 			ReplaceParts(randomParts);
 		}
-
-		#region Private
-
-		private ORAReader oraReader = null;
 
 		private void ReplaceParts(ArcadianParts newParts)
 		{

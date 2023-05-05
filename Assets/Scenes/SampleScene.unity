@@ -362,15 +362,7 @@ MonoBehaviour:
   arcadianRenderer: {fileID: 613431525}
   isRandom: 1
   loadRequest:
-    Parts:
-    - Name: 
-      Location: 
-    - Name: 
-      Location: 
-    - Name: 
-      Location: 
-    - Name: 
-      Location: 
+    Parts: []
 --- !u!114 &613431525 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7428873614530905412, guid: 532b93761b51cbe4abd5e9bef33b6129, type: 3}
@@ -637,15 +629,7 @@ MonoBehaviour:
   arcadianRenderer: {fileID: 1557571457}
   isRandom: 1
   loadRequest:
-    Parts:
-    - Name: 
-      Location: 
-    - Name: 
-      Location: 
-    - Name: 
-      Location: 
-    - Name: 
-      Location: 
+    Parts: []
 --- !u!114 &1557571457 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7428873614530905412, guid: 532b93761b51cbe4abd5e9bef33b6129, type: 3}
