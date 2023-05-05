@@ -83,7 +83,7 @@ tags.meta
 
 token.json
 
-Assets/StreamingAssets
+# Assets/StreamingAssets
 ServerData/
 .vsconfig
 Assets/Resources/env*
