@@ -45,4 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oraPath: Assets/ORARenderer/arcadians.ora
-  oraPathV2: Assets/ORARenderer/arcadians_4_28.ora
+  oraPathV2: Assets/ORARenderer/arcadians_v2.ora
