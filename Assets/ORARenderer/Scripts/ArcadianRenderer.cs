@@ -30,6 +30,8 @@ namespace ORARenderer
 
 		public void RequestPartsRandom() => StartCoroutine(RequestRandomCR());
 
+		public bool IsLoading { get; private set; } = false;
+
 		#region Private
 
 		private ORAReader oraReader = null;
@@ -48,10 +50,14 @@ namespace ORARenderer
 				yield break;
 			}
 
+			IsLoading = true;
+
 			yield return new WaitUntil(() => oraReader.IsLoaded);
 
 			ArcadianParts newParts = oraReader.GetPartData(loadRequest);
 			ReplaceParts(newParts);
+
+			IsLoading = false;
 		}
 
 		private IEnumerator RequestRandomCR()
