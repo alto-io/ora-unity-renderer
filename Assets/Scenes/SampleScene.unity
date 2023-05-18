@@ -484,7 +484,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7625077512196841286, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7625077512196841286, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
       propertyPath: m_LocalPosition.z
@@ -517,6 +517,70 @@ PrefabInstance:
     - target: {fileID: 7625077512196841286, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: isRandom
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[0].Name
+      value: uwu-eyed
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[1].Name
+      value: Sad
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[2].Name
+      value: M Pale
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[3].Name
+      value: Brown Rat Tail
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[4].Name
+      value: Sniper Leggings
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[5].Name
+      value: Citrus Top
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[6].Name
+      value: Citrus Top
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[0].Location
+      value: Eyes
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[1].Location
+      value: Mouth
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[2].Location
+      value: Skin
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[3].Location
+      value: Hairstyle
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[4].Location
+      value: Bottom
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[5].Location
+      value: Top
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951965939975825287, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
+      propertyPath: loadRequest.Parts.Array.data[6].Location
+      value: Top
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c0ca17dc0e7c034ea426f5ecb31cd37, type: 3}
