@@ -105,18 +105,31 @@ namespace ORARenderer
 				}
 
 				Predicate<LocationData> match = x => x != null && x.Name == materialLocationNames[i];
-				var defaultPart = oraReader.ArcadianReference.Locations.Find(match).Parts[0];
 
 				if (newParts == null || newParts.Locations == null || !newParts.Locations.Exists(match))
 				{
-					ReplacePart(arcadianRenderer.materials[i], defaultPart);
+					bool loadDefault =
+						materialLocationNames[i] == "Skin" ||
+						materialLocationNames[i] == "Eyes" ||
+						materialLocationNames[i] == "Mouth";
+
+					if (loadDefault)
+					{
+						var defaultPart = oraReader.ArcadianReference.Locations.Find(match).Parts[0];
+						ReplacePart(arcadianRenderer.materials[i], defaultPart);
+					}
+					else
+					{
+						LoadBlankPart(arcadianRenderer.materials[i]);
+					}
+
 					continue;
 				}
 
 				var location = newParts.Locations.Find(match);
 
 				if (location.Parts.Count == 0)
-					ReplacePart(arcadianRenderer.materials[i], defaultPart);
+					LoadBlankPart(arcadianRenderer.materials[i]);
 				else
 					ReplacePart(arcadianRenderer.materials[i], location.Parts[0]);
 			}
